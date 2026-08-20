@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Platforms>x64</Platforms>
+    <AssemblyVersion>16.08.2026.0</AssemblyVersion>
+    <FileVersion>16.08.2026.0</FileVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Source\Domain.fs" />
+    <Compile Include="Source\Game.fs" />
+    <Compile Include="Source\Rules.fs" />
+    <Compile Include="Source\State.fs" />
+    <Compile Include="Source\Effects.fs" />
+    <Compile Include="Source\Runtime.fs" />
+    <Compile Include="Source\Boundary.fs" />
+    <Compile Include="Source\Script.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CommunityScriptHookVDotNetCore">
+      <HintPath>..\..\CommunityScriptHookVDotNetCore\CommunityScriptHookVDotNetCore\bin\x64\Release\net10.0\CommunityScriptHookVDotNetCore.dll</HintPath>
+    </Reference>
+    <Reference Include="StandardGameOperations">
+      <HintPath>..\..\CommunityScriptHookVDotNetCore\StandardGameOperations\bin\x64\Release\net10.0\StandardGameOperations.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
