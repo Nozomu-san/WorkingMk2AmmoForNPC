@@ -1,8 +1,5 @@
 namespace WorkingMk2AmmoForNPC.Source
 
-open System
-open StandardGameOperations.Source
-
 [<RequireQualifiedAccess>]
 type internal Mk2AmmoEffect =
     | Explosive
@@ -12,31 +9,17 @@ type internal Mk2AmmoEffect =
     | FullMetalJacket
     | Tracer
 
-[<Struct>]
-type internal CriticalShotProfile =
-    { ChancePercent: int
-      DamageMultiplier: single }
-    member this.IsEnabled =
-        this.ChancePercent > 0 &&
-        Single.IsFinite(this.DamageMultiplier) &&
-        this.DamageMultiplier > 1.0f
-
 [<RequireQualifiedAccess>]
-module internal CriticalShotProfile =
-    let create chancePercent damageMultiplier =
-        if chancePercent <= 0 ||
-           not (Single.IsFinite(damageMultiplier)) ||
-           damageMultiplier <= 1.0f then
-            Unchecked.defaultof<CriticalShotProfile>
-        else
-            { ChancePercent = min 100 chancePercent
-              DamageMultiplier = damageMultiplier }
+type internal HeavyRevolverTracerBoostMode =
+    | Always = 0
+    | Never = 1
+    | MagazineQuota = 2
 
 [<Struct>]
 type internal TracerCadence =
     { FirstTracerShot: int
       RepeatInterval: int }
-    member this.IsEveryShotRandomDoubleException =
+    member this.UsesFixedQuota =
         this.FirstTracerShot = 1 && this.RepeatInterval = 0
 
 [<RequireQualifiedAccess>]
@@ -59,7 +42,7 @@ module internal TracerCadence =
     let isTracerShot (oneBasedShotNumber: int) (cadence: TracerCadence) =
         if oneBasedShotNumber <= 0 then
             false
-        elif cadence.IsEveryShotRandomDoubleException then
+        elif cadence.UsesFixedQuota then
             true
         else
             let normalized =
@@ -78,33 +61,14 @@ module internal TracerCadence =
                     normalized.RepeatInterval = 0
 
 [<Struct>]
-type internal AmmoRule =
-    { WeaponName: string
-      ComponentName: string
-      AmmoTypeName: string
-      WeaponHash: uint32
+type internal ComponentRule =
+    { ComponentName: string
       ComponentHash: uint32
-      AmmoTypeHash: uint32
       Effect: Mk2AmmoEffect
-      CriticalShot: CriticalShotProfile }
+      TracerCadence: TracerCadence
+      ExplosionType: int }
 
 [<Struct>]
-type internal OriginalNameRule =
-    { WeaponName: string
-      ComponentName: string
-      AmmoTypeName: string
+type internal OriginalComponentBinding =
+    { ComponentName: string
       Effect: Mk2AmmoEffect }
-
-[<Struct>]
-type internal FullMetalJacketVehicleEffect =
-    { Applied: bool
-      TransferableDirectHealthLoss: single }
-
-[<Sealed>]
-type internal ExplosiveSettlement(
-    baseline: EngagementBaseline,
-    rule: AmmoRule,
-    resolveAtHostFrame: uint64) =
-    member _.Baseline = baseline
-    member _.Rule = rule
-    member _.ResolveAtHostFrame = resolveAtHostFrame
